@@ -1,0 +1,26 @@
+{
+  "name": "quebra_gelo",
+  "version": "0.0.1",
+  "description": "BOT para o Discord que posta perguntas aleatórias para o servidor quando solicitado",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vico93/quebra_gelo.git"
+  },
+  "keywords": [
+    "discord",
+    "bot"
+  ],
+  "author": "Vico",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vico93/quebra_gelo/issues"
+  },
+  "homepage": "https://github.com/vico93/quebra_gelo#readme",
+  "dependencies": {
+    "discord.js": "^13.8.1"
+  }
+}
