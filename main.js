@@ -28,7 +28,7 @@ bot.on('messageCreate', msg => {
 	const command = msg.content.slice(config.prefix.length).split(' ')[0]
 	if (command === 'help')
 	{
-		msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `quebrarev` - Envia uma mensagem **com** `@everyone`.");
+		msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `quebrarhe` - Envia uma mensagem com `@here`\n- `quebrarev` - Envia uma mensagem **com** `@everyone`.");
 		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
 		{
 			msg.delete();
@@ -41,6 +41,14 @@ bot.on('messageCreate', msg => {
 		{
 			msg.delete();
 		}	
+	}
+	else if (command === 'quebrarhe')
+	{
+		msg.channel.send("@here " + pergunta_aleatoria());
+		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+		{
+			msg.delete();
+		}
 	}
 	else if (command === 'quebrarev')
 	{
