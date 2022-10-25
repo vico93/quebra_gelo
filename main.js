@@ -18,47 +18,73 @@ function pergunta_aleatoria()
 }
 
 /* FLUXO PRINCIPAL */
-// When the client is ready, run this code (only once)
+// Informa que o bot está pronto
 bot.once('ready', function() {
 	console.log('[INFO] Quebra-Gelo iniciado!');
 });
 
 // Quando uma mensagem é enviada ao servidor
 bot.on('messageCreate', msg => {
-	const command = msg.content.slice(config.prefix.length).split(' ')[0]
-	if (command === 'help')
+	// Só processa o que o membro digitou se ele tiver permissão para usar comandos de aplicativo
+	if (msg.member.permissions.has("USE_APPLICATION_COMMANDS"))
 	{
-		msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `quebrarhe` - Envia uma mensagem com `@here`\n- `quebrarev` - Envia uma mensagem **com** `@everyone`.");
-		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+		const command = msg.content.slice(config.prefix.length).split(' ')[0]
+		if (command === 'help')
 		{
-			msg.delete();
-		}		
-	}
-	else if (command === 'quebrar')
-	{
-		msg.channel.send(pergunta_aleatoria());
-		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
-		{
-			msg.delete();
-		}	
-	}
-	else if (command === 'quebrarhe')
-	{
-		msg.channel.send("@here " + pergunta_aleatoria());
-		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
-		{
-			msg.delete();
+			// Só apresenta os comandos que mencionam @everyone se o membro tiver essa permissão
+			if (msg.member.permissions.has("MENTION_EVERYONE"))
+			{
+				msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `quebrarhe` - Envia uma pergunta com `@here`\n- `quebrarev` - Envia uma pergunta **com** `@everyone`.");
+			}
+			else
+			{
+				msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta");
+			}
+
+			// Apaga a mensagem que serviu pra invocar o comando
+			if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+			{
+				msg.delete();
+			}		
 		}
-	}
-	else if (command === 'quebrarev')
-	{
-		msg.channel.send("@everyone " + pergunta_aleatoria());
-		if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+		else if (command === 'quebrar')
 		{
-			msg.delete();
+			// Envia a pergunta aleatória
+			msg.channel.send(pergunta_aleatoria());
+			// Apaga a mensagem que serviu pra invocar o comando
+			if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+			{
+				msg.delete();
+			}	
+		}
+		else if (command === 'quebrarhe')
+		{
+			// Só executa o comando se o membro tem permissão de mencionar @everyone
+			if (msg.member.permissions.has("MENTION_EVERYONE"))
+			{
+				msg.channel.send("@here " + pergunta_aleatoria());
+			}
+			// Apaga a mensagem que serviu pra invocar o comando
+			if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+			{
+				msg.delete();
+			}
+		}
+		else if (command === 'quebrarev')
+		{
+			// Só executa o comando se o membro tem permissão de mencionar @everyone
+			if (msg.member.permissions.has("MENTION_EVERYONE"))
+			{
+				msg.channel.send("@everyone " + pergunta_aleatoria());
+			}
+			// Apaga a mensagem que serviu pra invocar o comando
+			if (msg.guild.me.permissions.has("MANAGE_MESSAGES"))
+			{
+				msg.delete();
+			}
 		}
 	}
 });
 
-// Login to Discord with your client's token
+// Conecta o bot ao Discord
 bot.login(config.token);
