@@ -34,7 +34,7 @@ bot.on('messageCreate', msg => {
 			// Só apresenta os comandos que mencionam @everyone se o membro tiver essa permissão
 			if (msg.member.permissions.has("MENTION_EVERYONE"))
 			{
-				msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `quebrarhe` - Envia uma pergunta com `@here`\n- `quebrarev` - Envia uma pergunta **com** `@everyone`.");
+				msg.channel.send("- `" + config.prefix + "help` - Esta mensagem;\n- `" + config.prefix + "quebrar` - Envia uma pergunta **sem** `@everyone`;\n- `" + config.prefix + "quebrarhe` - Envia uma pergunta com `@here`\n- `" + config.prefix + "quebrarev` - Envia uma pergunta **com** `@everyone`.");
 			}
 			else
 			{
