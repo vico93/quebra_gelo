@@ -38,7 +38,7 @@ bot.on('messageCreate', msg => {
 			}
 			else
 			{
-				msg.channel.send("*Assumindo que o prefixo é `gelo!`...*\n- `help` - Esta mensagem;\n- `quebrar` - Envia uma pergunta");
+				msg.channel.send("- `" + config.prefix + "help` - Esta mensagem;\n- `" + config.prefix + "quebrar` - Envia uma pergunta");
 			}
 
 			// Apaga a mensagem que serviu pra invocar o comando
