@@ -25,8 +25,15 @@ bot.once('ready', function() {
 
 // Quando uma mensagem é enviada ao servidor
 bot.on('messageCreate', msg => {
+	// DEBUG
+	console.log(msg.channel.type);
+	console.log(msg.member);
+	console.log(msg.member.permissions);
+	// Filtra bots
+	if (msg.author.bot) return;
 	// Só processa o que o membro digitou se ele tiver permissão para usar comandos de aplicativo
-	if (msg.member.permissions.has("USE_APPLICATION_COMMANDS"))
+	console.log(msg.member.permissions.has("USE_APPLICATION_COMMANDS", true));
+	if (msg.member.permissions.has("USE_APPLICATION_COMMANDS", true))
 	{
 		const command = msg.content.slice(config.prefix.length).split(' ')[0]
 		if (command === 'help')
