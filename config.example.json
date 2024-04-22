@@ -1,4 +1,7 @@
 {
 	"token": "your-token-goes-here",
-	"prefix": "gelo!"
+	"prefix": "gelo!",
+	"openai_apikey": "your-api-key-goes-here",
+	"openai_context": "system field",
+	"openai_command": "assistant field"
 }

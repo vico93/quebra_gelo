@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/vico93/quebra_gelo#readme",
   "dependencies": {
-    "discord.js": "^13.8.1"
+    "discord.js": "^13.8.1",
+    "openai": "^4.38.3"
   }
 }
