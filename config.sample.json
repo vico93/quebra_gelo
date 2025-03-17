@@ -1,0 +1,11 @@
+{
+  "discord": {
+    "bot_token": "INSIRA AQUI"
+  },
+  "openai": {
+	"base_url": "https://api.openai.com/",
+	"api_key": "INSIRA AQUI",
+	"context": "Gere uma pergunta aleatória em português do brasil para um grupo de amigos. Retorne apenas a pergunta, por gentileza",
+	"model": "gpt-4o"
+  }
+}

@@ -1,39 +1,61 @@
+/*
+ *  Nome:					quebra_gelo
+ *  Descrição:				Bot que gera perguntas aleatórias para animar o server do Discord
+ *  Autor:					Vico
+ *  Versão:					2.0
+ *  Dependências:			discord.js e openai
+*/
+
 // Requer as classes discord.js necessárias
-const { Client, Events, GatewayIntentBits } = require('discord.js');
-const Groq = require('groq-sdk');
-const fs = require('fs');
+import { Client, Events, GatewayIntentBits } from 'discord.js';
+import OpenAI from 'openai';
+import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // CONFIG
-require('dotenv').config();
-const { DISCORD_TOKEN, GROQ_API_KEY } = process.env;
+import config from './config.json' with { type: 'json' };
 
-// Criar uma nova instância client
+// Criar uma nova instância no Discord e OpenAI
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const groq = new Groq({ apiKey: GROQ_API_KEY });
+const openai = new OpenAI({
+	apiKey: config.openai.api_key,
+	baseURL: config.openai.base_url,
+});
 
-// Função para gerar a pergunta via Groq
+// Função para gerar a pergunta via OpenAI
 async function gerar_pergunta_gpt() {
-    const completion = await groq.chat.completions.create({
-        messages: [
-            {
-                role: "user",
-                content: "Gere uma pergunta aleatória em português do brasil para um grupo de amigos. Retorne apenas a pergunta, por gentileza",
-            },
-        ],
-        model: "llama3-8b-8192",
-    });
+	try {
+			const completion = await openai.chat.completions.create({
+				model: config.openai.model,
+				messages: [
+					{ role: 'user', content: config.openai.context },
+				],
+			});
 
-    return completion.choices[0]?.message?.content || "Não foi possível gerar uma pergunta.";
+			// console.log("Resposta da OpenAI:", completion); // <-- Log para depuração
+
+			if (!completion || !completion.choices || completion.choices.length === 0) {
+				console.error("Resposta inesperada da API OpenAI (ou compatível):", completion);
+				return "Erro ao processar resposta da API OpenAI (ou compatível).";
+			}
+
+			return completion.choices[0].message.content;
+
+		} catch (error) {
+			console.error("Erro na requisição para API OpenAI (ou compatível):", error);
+			return "Ocorreu um erro ao se comunicar com a API OpenAI (ou compatível).";
+		}
 }
 
 // Função para gerar a pergunta via .txt (padrão)
 async function gerar_pergunta_txt() {
     try {
-        // Lê o conteúdo do arquivo-texto onde estão as perguntas
-        const arq_perguntas = await fs.promises.readFile(__dirname + '/fonte.txt', 'utf8');
-        // Separa as perguntas em um array de strings
+        // Use path.join for better path handling
+        const filePath = `${__dirname}/fonte.txt`;
+        const arq_perguntas = await fs.promises.readFile(filePath, 'utf8');
         const perguntas = arq_perguntas.split("\n").filter(line => line.trim() !== '');
-        // Retorna uma das linhas aleatoriamente
         return perguntas.length > 0 ? perguntas[Math.floor(Math.random() * perguntas.length)] : "Nenhuma pergunta disponível.";
     } catch (error) {
         console.error("Erro ao ler o arquivo de perguntas:", error);
@@ -46,7 +68,7 @@ async function gerar_pergunta_txt() {
 // A distinção entre `client: Client<boolean>` e `readyClient: Client<true>` é importante para desenvolvedores TypeScript.
 // Faz com que algumas properties fiquem non-nullable.
 client.once(Events.ClientReady, readyClient => {
-	console.log(`Pronto! Logado como ${readyClient.user.tag}`);
+	console.log(`Conectado como ${client.user.tag}!`);
 });
 
 // Manusear a interação do comando
@@ -81,4 +103,4 @@ client.on(Events.InteractionCreate, async interaction => {
 
 
 // Entre no Discord com o token do seu cliente
-client.login(DISCORD_TOKEN);
+client.login(config.discord.bot_token);
