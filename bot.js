@@ -88,7 +88,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
             await interaction.editReply({
                 content: resposta,
-                allowed_mentions: mencao ? { parse: ['everyone', 'roles', 'users'] } : {}, // Habilita menções
+                allowedMentions: mencao ? { parse: ['everyone', 'roles', 'users'] } : {}, // Habilita menções
             });
         } catch (error) {
             console.error('Erro ao responder:', error);

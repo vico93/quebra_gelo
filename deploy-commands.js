@@ -1,16 +1,15 @@
-const { REST, Routes } = require('discord.js');
-require('dotenv').config();
-const { commands } = require('./comando_perguntar.js');
-const { DISCORD_TOKEN, DISCORD_CLIENT_ID, DISCORD_GUILD_ID } = process.env;
+import { REST, Routes } from 'discord.js';
+import config from './config.json' with { type: 'json' };
+import { commands } from './comando_perguntar.js';
 
-const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
+const rest = new REST({ version: '10' }).setToken(config.discord.bot_token);
 
 (async () => {
     try {
         console.log('Iniciando registro de comandos...');
 
         await rest.put(
-            Routes.applicationGuildCommands(DISCORD_CLIENT_ID, DISCORD_GUILD_ID),
+            Routes.applicationGuildCommands(config.discord.client_id, config.discord.guild_id),
             { body: commands }
         );
 
