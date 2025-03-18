@@ -16,8 +16,6 @@ const perguntarCommand = new SlashCommandBuilder()
             .setDescription('Mencione um usuário ou escolha @everyone/@here')
             .setRequired(false));
 
-const commands = [
+export const commands = [
     perguntarCommand.toJSON(),
 ];
-
-module.exports = { commands };
