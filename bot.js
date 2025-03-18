@@ -17,6 +17,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // CONFIG
 import config from './config.json' with { type: 'json' };
 
+// Última pergunta feita (independentemente do canal)
+let last_question = "";
+
 // Criar uma nova instância no Discord e OpenAI
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const openai = new OpenAI({
@@ -26,37 +29,45 @@ const openai = new OpenAI({
 
 // Função para gerar a pergunta via OpenAI
 async function gerar_pergunta_gpt() {
-	try {
-			const completion = await openai.chat.completions.create({
-				model: config.openai.model,
-				messages: [
-					{ role: 'user', content: config.openai.context },
-				],
-			});
+    try {
+        const completion = await openai.chat.completions.create({
+            model: config.openai.model,
+            messages: [
+				{ role: 'assistant', content: last_question },
+                { role: 'user', content: config.openai.context },
+            ],
+        });
 
-			// console.log("Resposta da OpenAI:", completion); // <-- Log para depuração
+        if (!completion?.choices?.[0]?.message?.content) {
+            console.error("Resposta inesperada da API OpenAI (ou compatível):", completion);
+            return "Erro ao processar resposta da API OpenAI (ou compatível).";
+        }
 
-			if (!completion || !completion.choices || completion.choices.length === 0) {
-				console.error("Resposta inesperada da API OpenAI (ou compatível):", completion);
-				return "Erro ao processar resposta da API OpenAI (ou compatível).";
-			}
+        const question = completion.choices[0].message.content;
+        last_question = question;  // Store in global variable
+        return question;
 
-			return completion.choices[0].message.content;
-
-		} catch (error) {
-			console.error("Erro na requisição para API OpenAI (ou compatível):", error);
-			return "Ocorreu um erro ao se comunicar com a API OpenAI (ou compatível).";
-		}
+    } catch (error) {
+        console.error("Erro na requisição para API OpenAI (ou compatível):", error);
+        return "Ocorreu um erro ao se comunicar com a API OpenAI (ou compatível).";
+    }
 }
 
 // Função para gerar a pergunta via .txt (padrão)
 async function gerar_pergunta_txt() {
     try {
-        // Use path.join for better path handling
         const filePath = `${__dirname}/fonte.txt`;
         const arq_perguntas = await fs.promises.readFile(filePath, 'utf8');
         const perguntas = arq_perguntas.split("\n").filter(line => line.trim() !== '');
-        return perguntas.length > 0 ? perguntas[Math.floor(Math.random() * perguntas.length)] : "Nenhuma pergunta disponível.";
+        
+        if (perguntas.length === 0) {
+            return "Nenhuma pergunta disponível.";
+        }
+
+        const question = perguntas[Math.floor(Math.random() * perguntas.length)];
+        last_question = question;  // Store in global variable
+        return question;
+
     } catch (error) {
         console.error("Erro ao ler o arquivo de perguntas:", error);
         return "Erro ao obter a pergunta.";
